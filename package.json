@@ -1,0 +1,57 @@
+{
+  "name": "mcp-copilot-logger",
+  "version": "1.0.0",
+  "description": "A service for logging and managing development interactions with Copilot.",
+  "main": "src/server/index.ts",
+  "scripts": {
+    "start": "ts-node src/server/index.ts",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "start:prod": "node dist/server/index.js",
+    "start:mcp": "node start-mcp.js",
+    "test": "jest",
+    "test:mcp": "node test-mcp.js",
+    "lint": "eslint .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "body-parser": "^1.20.2",
+    "eslint": "^7.32.0",
+    "express": "^4.17.1",
+    "jest": "^27.0.6",
+    "node-fetch": "^3.3.2",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.4",
+    "better-sqlite3": "^9.2.2",
+    "openai": "^4.20.1",
+    "lodash": "^4.17.21",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/jest": "^27.0.2",
+    "@typescript-eslint/eslint-plugin": "^5.10.0",
+    "@typescript-eslint/parser": "^5.10.0",
+    "@types/better-sqlite3": "^7.6.8",
+    "@types/lodash": "^4.14.202",
+    "@types/uuid": "^9.0.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/mcp-copilot-logger.git"
+  },
+  "keywords": [
+    "mcp",
+    "copilot",
+    "logger",
+    "development",
+    "markdown"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yourusername/mcp-copilot-logger/issues"
+  },
+  "homepage": "https://github.com/yourusername/mcp-copilot-logger#readme"
+}

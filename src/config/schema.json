@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "logLevel": {
+      "type": "string",
+      "enum": ["debug", "info", "warn", "error"],
+      "default": "info"
+    },
+    "outputDirectory": {
+      "type": "string",
+      "description": "Directory where logs and markdown files will be saved."
+    },
+    "obsidianVaultPath": {
+      "type": "string",
+      "description": "Path to the Obsidian vault for exporting logs."
+    },
+    "gitHooks": {
+      "type": "object",
+      "properties": {
+        "enable": {
+          "type": "boolean",
+          "default": true
+        },
+        "hookTypes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["pre-commit", "post-commit"]
+          }
+        }
+      }
+    },
+    "valueAssessmentCriteria": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": ["outputDirectory", "obsidianVaultPath", "valueAssessmentCriteria"]
+}

@@ -1,0 +1,20 @@
+{
+  "logLevel": "info",
+  "outputDirectory": "./.mcp/logs",
+  "obsidianVaultPath": "/Users/zhw/Documents/Obsidian Vault/mcp-copilot-logger",
+  "defaultTemplate": "src/templates/problem-record.md",
+  "valueAssessmentCriteria": [
+    "Complexity of the problem",
+    "Frequency of occurrence",
+    "Impact on development workflow",
+    "Learning opportunity"
+  ],
+  "gitHook": {
+    "enabled": true,
+    "hookType": "pre-commit"
+  },
+  "vscodeIntegration": {
+    "enabled": true,
+    "autoLogOnSave": true
+  }
+}

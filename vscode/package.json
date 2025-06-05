@@ -1,0 +1,41 @@
+{
+  "name": "mcp-copilot-logger",
+  "version": "1.0.0",
+  "description": "VSCode extension for MCP Copilot Logger",
+  "main": "extension.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "vscode",
+    "extension",
+    "mcp",
+    "copilot",
+    "logger"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "vscode": "^1.60.0"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.60.0",
+    "typescript": "^4.4.3"
+  },
+  "activationEvents": [
+    "onCommand:mcp.startLogging",
+    "onCommand:mcp.exportToObsidian"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "mcp.startLogging",
+        "title": "Start MCP Logging"
+      },
+      {
+        "command": "mcp.exportToObsidian",
+        "title": "Export Logs to Obsidian"
+      }
+    ]
+  }
+}

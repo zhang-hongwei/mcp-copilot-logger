@@ -1,0 +1,35 @@
+{
+  "logLevel": "info",
+  "outputDirectory": "./.mcp/logs",
+  "autoLog": true,
+  "gitHook": {
+    "enabled": true,
+    "hookType": "pre-commit"
+  },
+  "obsidian": {
+    "enabled": true,
+    "vaultPath": "/Users/zhw/Documents/Obsidian Vault/mcp-copilot-logger",
+    "defaultFolder": "DevLogs",
+    "problemRecordsFolder": "问题记录",
+    "valueAssessmentsFolder": "价值评估",
+    "dailyLogsFolder": "每日日志",
+    "iterationReportsFolder": "迭代报告",
+    "namingConvention": "YYYY-MM-DD-title",
+    "enableAutoLinking": true,
+    "defaultTags": [
+      "MCP",
+      "问题解决",
+      "开发日志"
+    ]
+  },
+  "valueAssessment": {
+    "enabled": true,
+    "criteria": [
+      "timeSpent",
+      "complexity",
+      "reusability"
+    ],
+    "minExportScore": 6,
+    "exportWorthyThreshold": 0.7
+  }
+}
