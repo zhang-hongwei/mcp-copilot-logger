@@ -4,10 +4,6 @@
  * 真正的 MCP 服务器实现
  * 通过 stdin/stdout 与 VS Code 通信
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
 const { Server } = require('@modelcontextprotocol/sdk/server/index.js');
 const { StdioServerTransport } = require('@modelcontextprotocol/sdk/server/stdio.js');
 const { CallToolRequestSchema, ListToolsRequestSchema, } = require('@modelcontextprotocol/sdk/types.js');
@@ -15,11 +11,15 @@ const { CallToolRequestSchema, ListToolsRequestSchema, } = require('@modelcontex
 const { logProblem, getProblems } = require('./tools/problem-tracker');
 const { exportToObsidian } = require('./tools/obsidian-exporter');
 const { assessValue } = require('./tools/value-assessor');
-// 导入新的智能工具
-const intelligent_query_engine_1 = __importDefault(require("./tools/intelligent-query-engine"));
-const knowledge_pattern_analyzer_1 = __importDefault(require("./tools/knowledge-pattern-analyzer"));
-const copilot_context_enhancer_1 = __importDefault(require("./tools/copilot-context-enhancer"));
+// 暂时注释掉智能工具的导入，避免模块加载问题
+// import IntelligentQueryEngine from './tools/intelligent-query-engine';
+// import KnowledgePatternAnalyzer from './tools/knowledge-pattern-analyzer';
+// import CopilotContextEnhancer from './tools/copilot-context-enhancer';
 class MCPCopilotLogger {
+    // 暂时注释掉智能工具，确保基础功能正常
+    // private queryEngine: IntelligentQueryEngine;
+    // private patternAnalyzer: KnowledgePatternAnalyzer;
+    // private contextEnhancer: CopilotContextEnhancer;
     constructor() {
         this.server = new Server({
             name: 'mcp-copilot-logger',
@@ -29,10 +29,10 @@ class MCPCopilotLogger {
                 tools: {},
             },
         });
-        // 初始化新的智能工具
-        this.queryEngine = new intelligent_query_engine_1.default();
-        this.patternAnalyzer = new knowledge_pattern_analyzer_1.default();
-        this.contextEnhancer = new copilot_context_enhancer_1.default();
+        // 暂时注释掉智能工具初始化
+        // this.queryEngine = new IntelligentQueryEngine();
+        // this.patternAnalyzer = new KnowledgePatternAnalyzer();
+        // this.contextEnhancer = new CopilotContextEnhancer();
         this.setupHandlers();
     }
     setupHandlers() {
@@ -456,6 +456,8 @@ class MCPCopilotLogger {
                             ]
                         };
                     }
+                    // 暂时注释掉智能工具功能，确保基础 MCP 服务器正常工作
+                    /*
                     case 'intelligent_query': {
                         const result = await this.queryEngine.query({
                             query: args.query,
@@ -467,6 +469,7 @@ class MCPCopilotLogger {
                             priorityLevel: args.priority_level,
                             includeContext: args.include_context
                         });
+
                         return {
                             content: [
                                 {
@@ -479,8 +482,10 @@ class MCPCopilotLogger {
                             ]
                         };
                     }
+
                     case 'analyze_knowledge_pattern': {
                         const result = await this.patternAnalyzer.analyzePatterns();
+
                         return {
                             content: [
                                 {
@@ -493,6 +498,7 @@ class MCPCopilotLogger {
                             ]
                         };
                     }
+
                     case 'enhance_context': {
                         const result = await this.contextEnhancer.enhanceContext(args.problem_id, {
                             includeCodeExamples: args.include_code_examples,
@@ -500,6 +506,7 @@ class MCPCopilotLogger {
                             maxContextItems: args.max_context_items,
                             minRelevanceScore: args.min_relevance_score
                         });
+
                         return {
                             content: [
                                 {
@@ -512,6 +519,7 @@ class MCPCopilotLogger {
                             ]
                         };
                     }
+                    */
                     default:
                         throw new Error(`Unknown tool: ${name}`);
                 }
@@ -534,8 +542,23 @@ class MCPCopilotLogger {
         });
     }
     async run() {
-        const transport = new StdioServerTransport();
-        await this.server.connect(transport);
+        // 全局异常捕获，避免 handshake 阶段进程 silent exit
+        process.on('uncaughtException', (err) => {
+            process.stderr.write(`[MCP][uncaughtException] ${err instanceof Error ? err.message : String(err)}\n`);
+        });
+        process.on('unhandledRejection', (reason) => {
+            process.stderr.write(`[MCP][unhandledRejection] ${reason instanceof Error ? reason.message : String(reason)}\n`);
+        });
+        try {
+            process.stderr.write('[MCP] Starting StdioServerTransport...\n');
+            const transport = new StdioServerTransport();
+            await this.server.connect(transport);
+            process.stderr.write('[MCP] Server handshake complete, ready for requests.\n');
+        }
+        catch (err) {
+            process.stderr.write(`[MCP][run] Fatal error: ${err instanceof Error ? err.message : String(err)}\n`);
+            throw err;
+        }
     }
 }
 // 启动 MCP 服务器
