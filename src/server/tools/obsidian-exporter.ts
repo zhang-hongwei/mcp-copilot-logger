@@ -7,6 +7,18 @@ import { getProblems } from './problem-tracker';
 import * as fs from 'fs';
 import * as path from 'path';
 
+/**
+ * 清理文件名，确保符合文件系统要求并保持可读性
+ */
+function sanitizeFileName(title: string): string {
+    return title
+        .replace(/[<>:"/\\|?*]/g, '') // 移除文件系统不允许的字符
+        .replace(/\s+/g, '_') // 空格替换为下划线
+        .replace(/_{2,}/g, '_') // 多个连续下划线合并为一个
+        .replace(/^_+|_+$/g, '') // 移除开头和结尾的下划线
+        .substring(0, 100); // 限制长度避免文件名过长
+}
+
 export class ObsidianExporter {
     private config: ObsidianConfig;
     private fileManager: FileManager;
@@ -56,9 +68,11 @@ export class ObsidianExporter {
         const exportType = filterOptions?.exportType || 'high-value-problems';
         const markdownContent = this.templateGenerator.generateFullExportTemplate(allProblems, exportType);
 
-        // 生成文件路径
-        const timestamp = new Date().toISOString().split('T')[0];
-        const fileName = `MCP问题整理_${timestamp}.md`;
+        // 生成文件路径 - 使用时间戳确保唯一性
+        const now = new Date();
+        const timestamp = now.toISOString().split('T')[0];
+        const timeString = now.toTimeString().slice(0, 8).replace(/:/g, '-');
+        const fileName = `MCP问题整理_${timestamp}_${timeString}.md`;
         const exportPath = path.join(this.config.vaultPath, 'MCP问题整理', fileName);
 
         // 确保目录存在
@@ -79,8 +93,22 @@ export class ObsidianExporter {
 
     private getFilePath(timestamp: string, title: string): string {
         const date = new Date(timestamp).toISOString().split('T')[0];
-        const sanitizedTitle = title.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '-');
-        return `${this.config.problemRecordsFolder}/${date}-${sanitizedTitle}.md`;
+        const now = new Date();
+        const timeString = now.toTimeString().slice(0, 8).replace(/:/g, '-');
+        const sanitizedTitle = this.sanitizeFileName(title);
+        return `${this.config.problemRecordsFolder}/${sanitizedTitle}_${date}_${timeString}.md`;
+    }
+
+    /**
+     * 清理文件名，确保符合文件系统要求并保持可读性
+     */
+    private sanitizeFileName(title: string): string {
+        return title
+            .replace(/[<>:"/\\|?*]/g, '') // 移除文件系统不允许的字符
+            .replace(/\s+/g, '_') // 空格替换为下划线
+            .replace(/_{2,}/g, '_') // 多个连续下划线合并为一个
+            .replace(/^_+|_+$/g, '') // 移除开头和结尾的下划线
+            .substring(0, 100); // 限制长度避免文件名过长
     }
 }
 
@@ -117,8 +145,21 @@ export const exportToObsidian = async (problemIds: string[], options?: {
             const templateGenerator = new ObsidianTemplateGenerator();
             const content = templateGenerator.generateFullExportTemplate(selectedProblems, format);
 
-            const timestamp = new Date().toISOString().split('T')[0];
-            const fileName = `问题导出_${timestamp}.md`;
+            // 生成唯一文件名 - 如果只有一个问题，使用问题标题；否则使用时间戳
+            let fileName: string;
+            if (selectedProblems.length === 1) {
+                const sanitizedTitle = sanitizeFileName(selectedProblems[0].title || selectedProblems[0].description);
+                const now = new Date();
+                const date = now.toISOString().split('T')[0];
+                const timeString = now.toTimeString().slice(0, 8).replace(/:/g, '-');
+                fileName = `${sanitizedTitle}_${date}_${timeString}.md`;
+            } else {
+                const now = new Date();
+                const timestamp = now.toISOString().split('T')[0];
+                const timeString = now.toTimeString().slice(0, 8).replace(/:/g, '-');
+                fileName = `问题导出_${timestamp}_${timeString}.md`;
+            }
+
             const fullPath = path.join(obsidianConfig.problemRecordsFolder, fileName);
 
             // 确保目录存在
@@ -149,8 +190,10 @@ export const exportToObsidian = async (problemIds: string[], options?: {
         }
     } catch (error) {
         // 错误处理：创建错误报告
-        const timestamp = new Date().toISOString().split('T')[0];
-        const fileName = `导出错误_${timestamp}.md`;
+        const now = new Date();
+        const timestamp = now.toISOString().split('T')[0];
+        const timeString = now.toTimeString().slice(0, 8).replace(/:/g, '-');
+        const fileName = `导出错误_${timestamp}_${timeString}.md`;
         const errorPath = path.join(obsidianConfig.vaultPath, '错误报告');
 
         // 确保错误报告目录存在
